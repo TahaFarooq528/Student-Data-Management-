@@ -1,0 +1,149 @@
+cout << "Student with roll number " << rollNumber << " not found.\n";
+}
+
+void addStudent() {
+    for (int i = 0; i <= totalStudents; i++) {
+        cout << "\n---------------------------Adding Student---------------------------------\n";
+        getStudentData(i);
+    }
+
+    system("CLS");
+    cout << "\n---------------------------Student Record Table---------------------------------\n";
+    for (int i = 0; i <= totalStudents; i++) {
+        showStudentData(i);
+    }
+
+    cout << "--------------------------------------------------------------------------------\n";
+    cout << "---------------------------------Finish-----------------------------------------\n";
+    system("pause");
+
+    main();
+}
+
+void editStudent(int id) {
+    cout << "\n---------------------------Editing Student---------------------------------\n";
+    for (int i = 0; i <= totalStudents; i++) {
+        if (id == i) {
+            cout << "\nExisted information about this record.\n";
+            showStudentData(i);
+            cout << "\nEnter new data for the above-shown record.\n";
+            getStudentData(i);
+            cout << "\nRecord updated successfully.\n";
+            system("pause");
+            main();
+        }
+    }
+
+    cout << "\nInvalid Student ID.\n";
+}
+
+void deleteStudent(int id) {
+    cout << "\n---------------------------Deleting Student---------------------------------\n";
+    for (int i = 0; i <= totalStudents; i++) {
+        if (id == i) {
+            cout << "\nDeleted information about this record.\n";
+            showStudentData(i);
+            cout << "\nRecord deleted successfully.\n";
+
+            
+            for (int j = i; j < totalStudents; j++) {
+                students[j] = students[j + 1];
+            }
+            students[totalStudents] = {}; 
+
+            totalStudents--; 
+
+            system("pause");
+            main();
+        }
+    }
+
+    cout << "\nInvalid Student ID.\n";
+}
+
+void displayStatistics() {
+    cout << "\n\t\t*** Student Statistics ***\n";
+    cout << "Total number of students: " << totalStudents + 1 << "\n";
+
+    
+    for (int i = 0; i <= totalStudents; i++) {
+        float gpa = calculateGPA(i);
+        cout << "GPA for student with ID " << i << ": " << gpa << "\n";
+    }
+
+    system("pause");
+    main();
+}
+
+float calculateGPA(int studentIndex) {
+    float totalPoints = 0.0;
+    int totalCreditHours = 0;
+
+    for (int j = 0; j < 5; j++) {
+        
+        float points = 0.0;
+        switch (students[studentIndex].courses[j].grade) {
+            case 'A':
+                points = 4.0;
+                break;
+            case 'B':
+                points = 3.0;
+                break;
+            case 'C':
+                points = 2.0;
+                break;
+            case 'D':
+                points = 1.0;
+                break;
+            case 'F':
+                points = 0.0;
+                break;
+            default:
+                points = 0.0; 
+        }
+
+        totalPoints += points * students[studentIndex].courses[j].creditHours;
+        totalCreditHours += students[studentIndex].courses[j].creditHours;
+    }
+
+    if (totalCreditHours == 0) {
+        return 0.0; 
+    }
+
+    return totalPoints / totalCreditHours;
+}
+
+void displayTime() {
+    time_t now = time(0);
+    char* dt = ctime(&now);
+    cout << "The local date and time is: " << dt << "\n";
+}
+
+
+void studentLogin() {
+    int choice;
+    cout << "\n\t\tWhat do you want to do?" << endl;
+    cout << "\t\t----------------------" << endl;
+    cout << "\t\t1-Student Registration" << endl;
+    cout << "\t\t2-Student Login" << endl;
+    cout << "\t\t3-Back to Main Menu" << endl;
+    cout << "\t\t----------------------" << endl;
+    cout << "Enter your choice: ";
+    cin >> choice;
+
+    switch (choice) {
+        case 1:
+            addStudent();
+            break;
+        case 2:
+            main();
+            break;
+        case 3:
+            main();
+            break;
+        default:
+            cout << "Invalid choice." << endl;
+            system("pause");
+            studentLogin();
+    }
+}
