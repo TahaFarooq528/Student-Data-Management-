@@ -1,0 +1,349 @@
+#include <iostream>
+#include <string>
+#include <cstdlib>
+#include <ctime>
+
+using namespace std;
+
+struct Course {
+    string code;
+    int creditHours;
+    char grade;
+};
+
+class Faculty {
+public:
+    string username;
+    string password;
+};
+
+struct Student {
+    int rollNumber;
+    string fullName;
+    string fatherName;
+    string phoneNumber;
+    string dateOfBirth;
+    string homeAddress;
+    Course courses[5]; 
+};
+
+Student students[100];
+int totalStudents;
+
+int main();
+void studentLogin();
+void showStudentData(int studentIndex);
+void getStudentData(int index);
+void searchStudent(int rollNumber);
+void addStudent();
+void editStudent(int id);
+void deleteStudent(int id);
+void displayStatistics();
+float calculateGPA(int studentIndex);
+void displayTime();
+
+int main() {
+    system("CLS");
+    system("color F5");
+    int choice;
+    int studentId;
+    int searchRollNumber;
+
+    cout << "Enter the total number of students (up to 100): ";
+    cin >> totalStudents;
+
+    while (totalStudents--) {
+    	cout << "\n\t\tSTUDENT DATA MANAGEMENT SYSTEM"<< endl;
+    	cout << "\n\t\tTEAM - HIS MAJESTY'S OPPOSITION " << endl; 
+        cout << "\n\t\tWhat do you want to do?" << endl;
+        cout << "\t\t----------------------" << endl;
+        cout << "\t\t1 - Add student" << endl;
+        cout << "\t\t2 - Edit student" << endl;
+        cout << "\t\t3 - Search student" << endl;
+        cout << "\t\t4 - Delete student" << endl;
+        cout << "\t\t5 - Display Statistics" << endl;
+        cout << "\t\t6 - Quit Program" << endl;
+        cout << "\t\t7 - Student Login " << endl; 
+        cout << "\t\t----------------------" << endl;
+        cout << "Enter your choice: ";
+
+        cin >> choice;
+        switch (choice) {
+            case 1:
+                addStudent();
+                break;
+            case 2:
+                if (students[0].rollNumber == 0) {
+                    cout << "Please add students first." << endl;
+                    system("pause");
+                    main();
+                } else {
+                    cout << "\n---------------------------Student Record Table---------------------------------\n";
+                    for (int i = 0; i <= totalStudents; i++) {
+                        showStudentData(i);
+                    }
+                    cout << "--------------------------------------------------------------------------------\n";
+                    cout << "Which student ID do you want to edit: ";
+                    cin >> studentId;
+
+                    if (studentId > totalStudents || studentId < 0) {
+                        cout << "\nInvalid Student ID." << endl;
+                    } else {
+                        editStudent(studentId);
+                    }
+                }
+                break;
+
+            case 3:
+                if (students[0].rollNumber == 0) {
+                    cout << "Please add students first." << endl;
+                    system("pause");
+                    main();
+                } else {
+                    cout << "Enter roll number of the student you want to search: ";
+                    cin >> searchRollNumber;
+                    searchStudent(searchRollNumber);
+                }
+                break;
+
+            case 4:
+                if (students[0].rollNumber == 0) {
+                    cout << "Please add students first." << endl;
+                    system("pause");
+                    main();
+                } else {
+                    cout << "Enter ID of the student you want to delete: ";
+                    cin >> studentId;
+                    deleteStudent(studentId);
+                }
+                break;
+
+            case 5:
+                if (students[0].rollNumber == 0) {
+                    cout << "Please add students first." << endl;
+                    system("pause");
+                    main();
+                } else {
+                    displayStatistics();
+                }
+                break;
+
+            case 6:
+                return 0;
+            
+            case 7: 
+            studentLogin(); 
+
+            default:
+                cout << "Invalid number." << endl;
+                system("pause");
+                main();
+        }
+    }
+
+    return 0;
+}
+
+
+void getStudentData(int index) {
+    cout << "Enter student roll number in format (1XXX): ";
+    cin >> students[index].rollNumber;
+    cout << "Enter student full name: ";
+    cin.ignore(); // To handle getline after other inputs
+    getline(cin, students[index].fullName);
+    cout << "Enter student's father name: ";
+    getline(cin, students[index].fatherName);
+    cout << "Enter student's phone number: ";
+    getline(cin, students[index].phoneNumber);
+    cout << "Enter student's date of birth (dd/mm/yyyy): ";
+    getline(cin, students[index].dateOfBirth);
+    cout << "Enter student's home address: ";
+    getline(cin, students[index].homeAddress);
+
+    for (int j = 0; j < 5; j++) {
+        cout << "Enter course code for course " << j + 1 << ": ";
+        cin >> students[index].courses[j].code;
+        cout << "Enter credit hours for course " << j + 1 << ": ";
+        cin >> students[index].courses[j].creditHours;
+        cout << "Enter grade for course " << j + 1 << " (A, B, C, D, F): ";
+        cin >> students[index].courses[j].grade;
+    }
+}
+
+void showStudentData(int index) {
+    cout << "ID: " << index << "\n";
+    cout << "Roll Number: " << students[index].rollNumber << "\n";
+    cout << "Full Name: " << students[index].fullName << "\n";
+    cout << "Father's Name: " << students[index].fatherName << "\n";
+    cout << "Phone Number: " << students[index].phoneNumber << "\n";
+    cout << "Date of Birth: " << students[index].dateOfBirth << "\n";
+    cout << "Home Address: " << students[index].homeAddress << "\n";
+
+    // Now, show data for each course
+    for (int j = 0; j < 5; j++) {
+        cout << "Course " << j + 1 << ": " << students[index].courses[j].code << " - "
+             << students[index].courses[j].creditHours << " Credit Hours - Grade: "
+             << students[index].courses[j].grade << "\n";
+    }
+
+    cout << "--------------------------------------------------------------------------------\n";
+}
+
+void searchStudent(int rollNumber) {
+    for (int i = 0; i <= totalStudents; i++) {
+        if (students[i].rollNumber == rollNumber) {
+            cout << "\n---------------------------Search Result---------------------------------\n";
+            showStudentData(i);
+            return; 
+        }
+    }
+
+    cout << "Student with roll number " << rollNumber << " not found.\n";
+}
+
+void addStudent() {
+    for (int i = 0; i <= totalStudents; i++) {
+        cout << "\n---------------------------Adding Student---------------------------------\n";
+        getStudentData(i);
+    }
+
+    system("CLS");
+    cout << "\n---------------------------Student Record Table---------------------------------\n";
+    for (int i = 0; i <= totalStudents; i++) {
+        showStudentData(i);
+    }
+
+    cout << "--------------------------------------------------------------------------------\n";
+    cout << "---------------------------------Finish-----------------------------------------\n";
+    system("pause");
+
+    main();
+}
+
+void editStudent(int id) {
+    cout << "\n---------------------------Editing Student---------------------------------\n";
+    for (int i = 0; i <= totalStudents; i++) {
+        if (id == i) {
+            cout << "\nExisted information about this record.\n";
+            showStudentData(i);
+            cout << "\nEnter new data for the above-shown record.\n";
+            getStudentData(i);
+            cout << "\nRecord updated successfully.\n";
+            system("pause");
+            main();
+        }
+    }
+
+    cout << "\nInvalid Student ID.\n";
+}
+
+void deleteStudent(int id) {
+    cout << "\n---------------------------Deleting Student---------------------------------\n";
+    for (int i = 0; i <= totalStudents; i++) {
+        if (id == i) {
+            cout << "\nDeleted information about this record.\n";
+            showStudentData(i);
+            cout << "\nRecord deleted successfully.\n";
+
+            
+            for (int j = i; j < totalStudents; j++) {
+                students[j] = students[j + 1];
+            }
+            students[totalStudents] = {}; 
+
+            totalStudents--; 
+
+            system("pause");
+            main();
+        }
+    }
+
+    cout << "\nInvalid Student ID.\n";
+}
+
+void displayStatistics() {
+    cout << "\n\t\t** Student Statistics **\n";
+    cout << "Total number of students: " << totalStudents + 1 << "\n";
+
+    
+    for (int i = 0; i <= totalStudents; i++) {
+        float gpa = calculateGPA(i);
+        cout << "GPA for student with ID " << i << ": " << gpa << "\n";
+    }
+
+    system("pause");
+    main();
+}
+
+float calculateGPA(int studentIndex) {
+    float totalPoints = 0.0;
+    int totalCreditHours = 0;
+
+    for (int j = 0; j < 5; j++) {
+        
+        float points = 0.0;
+        switch (students[studentIndex].courses[j].grade) {
+            case 'A':
+                points = 4.0;
+                break;
+            case 'B':
+                points = 3.0;
+                break;
+            case 'C':
+                points = 2.0;
+                break;
+            case 'D':
+                points = 1.0;
+                break;
+            case 'F':
+                points = 0.0;
+                break;
+            default:
+                points = 0.0; 
+        }
+
+        totalPoints += points * students[studentIndex].courses[j].creditHours;
+        totalCreditHours += students[studentIndex].courses[j].creditHours;
+    }
+
+    if (totalCreditHours == 0) {
+        return 0.0; 
+    }
+
+    return totalPoints / totalCreditHours;
+}
+
+void displayTime() {
+    time_t now = time(0);
+    char* dt = ctime(&now);
+    cout << "The local date and time is: " << dt << "\n";
+}
+
+
+void studentLogin() {
+    int choice;
+    cout << "\n\t\tWhat do you want to do?" << endl;
+    cout << "\t\t----------------------" << endl;
+    cout << "\t\t1-Student Registration" << endl;
+    cout << "\t\t2-Student Login" << endl;
+    cout << "\t\t3-Back to Main Menu" << endl;
+    cout << "\t\t----------------------" << endl;
+    cout << "Enter your choice: ";
+    cin >> choice;
+
+    switch (choice) {
+        case 1:
+            addStudent();
+            break;
+        case 2:
+            main();
+            break;
+        case 3:
+            main();
+            break;
+        default:
+            cout << "Invalid choice." << endl;
+            system("pause");
+            studentLogin();
+    }
+}
